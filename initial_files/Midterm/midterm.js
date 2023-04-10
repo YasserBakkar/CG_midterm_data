@@ -6,8 +6,8 @@ var program;
 // TODO: define any global variables you need
 var letter1vertices, letter2vertices;
 var bufferY, buffer2;
-var color, colorLoc;
-var posX=0,posY=0;
+//var color, colorLoc;
+var posX = 0, posY = 0;
 
 
 window.onload = function init() {
@@ -99,21 +99,17 @@ window.onload = function init() {
 
     document.getElementById("posX").oninput = function (event) {
 
-         posX = parseFloat(event.target.value);
-
-         posY= parseFloat(document.getElementById("posY").value);
-
-         gl.viewport(posX , posY, canvas.width , canvas.height);
+        posX = parseFloat(event.target.value);
+        posY = parseFloat(document.getElementById("posY").value);
+        gl.viewport(posX, posY, canvas.width, canvas.height);
 
     };
     document.getElementById("posY").oninput = function (event) {
 
-         posY = parseFloat(event.target.value);
+        posY = parseFloat(event.target.value);
+        posX = parseFloat(document.getElementById("posX").value);
+        gl.viewport(posX, posY, canvas.width, canvas.height);
 
-         posX= parseFloat(document.getElementById("posX").value);
-
-         gl.viewport(posX , posY, canvas.width , canvas.height);
-       
     };
     document.getElementById("scaleX").oninput = function (event) {
         //TODO: fill here to adjust scale according to slider value
@@ -122,9 +118,9 @@ window.onload = function init() {
         //TODO: fill here to adjust scale according to slider value
     };
     document.getElementById("redSlider").oninput = function (event) {
-        var value = event.target.value;
-        var element = document.getElementById("element-to-change");
-        element.style.color = "rgb(" + value + ", 0, 0)";
+        //    var value = event.target.value;
+        //    var element = document.getElementById("element-to-change");
+        //    element.style.color = "rgb(" + value + ", 0, 0)";
     };
     document.getElementById("greenSlider").oninput = function (event) {
         //TODO: fill here to adjust color according to slider value
@@ -133,7 +129,7 @@ window.onload = function init() {
         //TODO: fill here to adjust color according to slider value
     };
 
-    colorLoc = gl.getUniformLocation(program,"color");	
+    //    colorLoc = gl.getUniformLocation(program,"color");	
 
     render();
 };
@@ -142,12 +138,11 @@ function render() {
     gl.clear(gl.COLOR_BUFFER_BIT);
 
     //Position
+    var XLocation = gl.getUniformLocation(program, "posxvalue");
+    gl.uniform1f(XLocation, posX);
 
-    var XLocation = gl.getUniformLocation(program , "posxvalue");
-    gl.uniform1f(XLocation , posX);
-
-    var YLocation = gl.getUniformLocation(program , "posyvalue");
-    gl.uniform1f(YLocation , posY);
+    var YLocation = gl.getUniformLocation(program, "posyvalue");
+    gl.uniform1f(YLocation, posY);
 
     // TODO: Send necessary uniform variables to shader and 
     // perform draw calls for drawing letters
@@ -178,10 +173,11 @@ function render() {
     // draw triangle
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, nn);
 
+    window.requestAnimFrame(render);
 
     // Color 
-  //  color = vec4(Math.random(),Math.random(),Math.random(),1.0);
-//	gl.uniform4fv(colorLoc,color);
+    //  color = vec4(Math.random(),Math.random(),Math.random(),1.0);
+    //	gl.uniform4fv(colorLoc,color);
 
 
 

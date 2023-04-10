@@ -19,11 +19,8 @@ void main()
 {
 	// TODO: calculate gl_Position appropriately
 
-//	vec2 scaledPosition = vec2(vPosition.x * u_ScaleX , vPosition.y * u_ScaleY);
-
-	gl_Position = vPosition;
-
-//	gl_Position = vec4(vPosition.x + posxvalue , vPosition.y + posyvalue , vPosition.zw);
+	vec2 scaledPosition = vec2(vPosition.x * u_ScaleX , vPosition.y * u_ScaleY);
+	gl_Position = vec4(vPosition.x + posxvalue , vPosition.y + posyvalue , vPosition.zw);
 
 }
 </script>
@@ -31,12 +28,12 @@ void main()
 	<script id="fragment-shader" type="x-shader/x-fragment">
 precision mediump float;
 // TODO: get required variables
-uniform vec4 color;
+
 
 void main()
 {
 	// TODO: assign color
-    gl_FragColor = color;
+    gl_FragColor = vec4(1.0,0.0,0.0,1.0);
 }
 </script>
 
