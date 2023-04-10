@@ -9,8 +9,8 @@
 attribute vec4 vPosition;
 
 // TODO: get required variables
-uniform float posX;
-uniform float posY;
+uniform float posxvalue;
+uniform float posyvalue;
 
 uniform float u_ScaleX;
 uniform float u_ScaleY; 
@@ -19,11 +19,11 @@ void main()
 {
 	// TODO: calculate gl_Position appropriately
 
-	 vec2 scaledPosition = vec2(vPosition.x * u_ScaleX , vPosition.y * u_ScaleY);
+//	vec2 scaledPosition = vec2(vPosition.x * u_ScaleX , vPosition.y * u_ScaleY);
 
-	gl_Position = vec4(scaledPosition.x + posX , scaledPosition.y + posY , vPosition.zw);
-	
-	gl_Position = vPosition;
+//	gl_Position = vec4(vPosition.x + posxvalue , vPosition.y + posyvalue , vPosition.zw);
+
+gl_Position = vec2(vPosition.x + posxvalue , vPosition.y + posyvalue , vPosition.zw);
 
 }
 </script>

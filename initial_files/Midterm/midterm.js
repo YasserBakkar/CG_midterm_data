@@ -143,10 +143,10 @@ function render() {
 
     //Position
 
-    var XLocation = gl.getUniformLocation(program , "posX");
+    var XLocation = gl.getUniformLocation(program , "posxvalue");
     gl.uniform1f(XLocation , posX);
 
-    var YLocation = gl.getUniformLocation(program , "posY");
+    var YLocation = gl.getUniformLocation(program , "posyvalue");
     gl.uniform1f(YLocation , posY);
 
     // TODO: Send necessary uniform variables to shader and 
