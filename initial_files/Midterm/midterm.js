@@ -8,7 +8,8 @@ var letter1vertices, letter2vertices;
 var bufferY, buffer2;
 //var color, colorLoc;
 var posX = 0, posY = 0;
-
+var scaleXUniformLocation=1.0
+var scaleYUniformLocation=1.0
 
 window.onload = function init() {
     canvas = document.getElementById("gl-canvas");
@@ -112,10 +113,14 @@ window.onload = function init() {
 
     };
     document.getElementById("scaleX").oninput = function (event) {
-        //TODO: fill here to adjust scale according to slider value
+
+        scaleXUniformLocation= parseFloat(event.target.value);
+
     };
     document.getElementById("scaleY").oninput = function (event) {
-        //TODO: fill here to adjust scale according to slider value
+
+        scaleYUniformLocation= parseFloat(event.target.value);
+
     };
     document.getElementById("redSlider").oninput = function (event) {
         //    var value = event.target.value;
@@ -136,6 +141,8 @@ window.onload = function init() {
 
 function render() {
     gl.clear(gl.COLOR_BUFFER_BIT);
+    // TODO: Send necessary uniform variables to shader and 
+    // perform draw calls for drawing letters
 
     //Position
     var XLocation = gl.getUniformLocation(program, "posxvalue");
@@ -144,8 +151,14 @@ function render() {
     var YLocation = gl.getUniformLocation(program, "posyvalue");
     gl.uniform1f(YLocation, posY);
 
-    // TODO: Send necessary uniform variables to shader and 
-    // perform draw calls for drawing letters
+    //Scale
+    var scaleXUniformLocations = gl.getUniformLocation(program, "u_ScaleX");
+    gl.uniform1f(scaleXUniformLocations,scaleXUniformLocation);
+
+    var scaleYUniformLocations = gl.getUniformLocation(program, "u_ScaleY");
+    gl.uniform1f(scaleYUniformLocations,scaleYUniformLocation);
+
+
 
     // bind vertex buffer and associate position data with shader variables
     gl.bindBuffer(gl.ARRAY_BUFFER, bufferY);
@@ -182,5 +195,3 @@ function render() {
 
 
 }
-
-
