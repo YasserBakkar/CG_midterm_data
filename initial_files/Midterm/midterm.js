@@ -8,8 +8,8 @@ var letter1vertices, letter2vertices;
 var bufferY, buffer2;
 //var color, colorLoc;
 var posX = 0, posY = 0;
-var scaleXUniformLocation=1.0
-var scaleYUniformLocation=1.0
+var scaleXUniformLocation=1.0;
+var scaleYUniformLocation=1.0;
 
 window.onload = function init() {
     canvas = document.getElementById("gl-canvas");
@@ -114,7 +114,7 @@ window.onload = function init() {
     };
     document.getElementById("scaleX").oninput = function (event) {
 
-        scaleXUniformLocation= parseFloat(event.target.value);
+        scaleXUniformLocation = parseFloat(event.target.value);
 
     };
     document.getElementById("scaleY").oninput = function (event) {
