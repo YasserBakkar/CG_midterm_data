@@ -21,9 +21,9 @@ void main()
 
 //	vec2 scaledPosition = vec2(vPosition.x * u_ScaleX , vPosition.y * u_ScaleY);
 
-//	gl_Position = vec4(vPosition.x + posxvalue , vPosition.y + posyvalue , vPosition.zw);
+	gl_Position = vPosition;
 
-	gl_Position = vec4(vPosition.x + posxvalue, vPosition.y + posyvalue,vPosition.zw);
+//	gl_Position = vec4(vPosition.x + posxvalue , vPosition.y + posyvalue , vPosition.zw);
 
 }
 </script>
