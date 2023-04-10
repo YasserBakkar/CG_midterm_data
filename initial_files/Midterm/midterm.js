@@ -3,11 +3,12 @@ var gl;
 var vPosition;
 var program;
 
+// TODO: define any global variables you need
 var letter1vertices, letter2vertices;
 var bufferY, buffer2;
 var color, colorLoc;
+var posX=0,posY=0;
 
-// TODO: define any global variables you need
 
 window.onload = function init() {
     canvas = document.getElementById("gl-canvas");
@@ -16,7 +17,7 @@ window.onload = function init() {
     if (!gl) { alert("WebGL isn't available"); }
 
     //  Configure WebGL
-    gl.viewport(0, 0, canvas.width, canvas.height);
+    gl.viewport(posX, posY, canvas.width, canvas.height);
     gl.clearColor(1.0, 1.0, 1.0, 1.0);
 
     //  Load shaders and initialize attribute buffers
@@ -98,13 +99,21 @@ window.onload = function init() {
 
     document.getElementById("posX").oninput = function (event) {
 
+         posX = parseFloat(event.target.value);
+
+         posY= parseFloat(document.getElementById("posY").value);
+
+         gl.viewport(posX , posY, canvas.width , canvas.height);
+
     };
     document.getElementById("posY").oninput = function (event) {
-        var value = event.target.value; // get the value of the slider
-        var yOffset = parseFloat(value); // convert the value to a floating-point number
-        for (var i = 0; i < letter1vertices.length; i++) {
-            letter1vertices[i].y = letter1vertices[i].y + yOffset; // update the y-coordinate of each vertex
-        }
+
+         posY = parseFloat(event.target.value);
+
+         posX= parseFloat(document.getElementById("posX").value);
+
+         gl.viewport(posX , posY, canvas.width , canvas.height);
+       
     };
     document.getElementById("scaleX").oninput = function (event) {
         //TODO: fill here to adjust scale according to slider value
@@ -131,6 +140,14 @@ window.onload = function init() {
 
 function render() {
     gl.clear(gl.COLOR_BUFFER_BIT);
+
+    //Position
+
+    var XLocation = gl.getUniformLocation(program , "posX");
+    gl.uniform1f(XLocation , posX);
+
+    var YLocation = gl.getUniformLocation(program , "posY");
+    gl.uniform1f(YLocation , posY);
 
     // TODO: Send necessary uniform variables to shader and 
     // perform draw calls for drawing letters
@@ -163,8 +180,8 @@ function render() {
 
 
     // Color 
-    color = vec4(Math.random(),Math.random(),Math.random(),1.0);
-	gl.uniform4fv(colorLoc,color);
+  //  color = vec4(Math.random(),Math.random(),Math.random(),1.0);
+//	gl.uniform4fv(colorLoc,color);
 
 
 
