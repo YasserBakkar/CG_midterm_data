@@ -11,7 +11,9 @@ var bufferY, bufferB, bufferUp, bufferDown;
 var posX = 0, posY = 0;
 var xScalingUniform = 1.0;
 var yScalingUniform = 1.0;
-var color = vec4(0.0, 1.0, 1.0, 1.0);
+var color = vec4(1.0, 0.0, 0.0, 1.0);
+var yColor = vec4(0.0, 1.0, 1.0, 1.0);
+
 var reversecolor = vec4(1.0 - color[0], 1.0 - color[1], 1.0 - color[2], color[3]);
 
 
@@ -156,11 +158,12 @@ function render() {
     gl.uniform1f(yScalingUniforms, yScalingUniform);
 
     //Color
-    gl.uniform4fv(colorLocation, reversecolor);
+    gl.uniform4fv(colorLocation, color);
      for (let i = 0; i < letterYvertices.length / 4; i++) {
          const offset = i * 4;
-         gl.drawArrays(gl.TRIANGLE_STRIP, offset, 4);
+         gl.drawArrays(gl.TRIANGLE_FAN, offset, 4);
      }
+    
 
 
 
@@ -184,7 +187,7 @@ function render() {
     gl.enableVertexAttribArray(vPosition);
     // draw semi-CircleUp
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, num);
-    
+
     // bind vertex buffer and associate position data with shader variables
     gl.bindBuffer(gl.ARRAY_BUFFER, bufferDown);
     gl.vertexAttribPointer(vPosition, vertexCount2, gl.FLOAT, false, 0, 0);
