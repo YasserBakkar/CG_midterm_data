@@ -6,10 +6,11 @@ var program;
 // TODO: define any global variables you need
 var letter1vertices, letter2vertices;
 var bufferY, buffer2;
-//var color, colorLoc;
 var posX = 0, posY = 0;
-var scaleXUniformLocation=1.0;
-var scaleYUniformLocation=1.0;
+var scaleXUniformLocation = 1.0;
+var scaleYUniformLocation = 1.0;
+var color = vec4(1.0, 0.0, 0.0, 1.0);
+var oppositecolor = vec4(1.0 - color[0], 1.0 - color[1], 1.0 - color[2], color[3]);
 
 window.onload = function init() {
     canvas = document.getElementById("gl-canvas");
@@ -119,22 +120,26 @@ window.onload = function init() {
     };
     document.getElementById("scaleY").oninput = function (event) {
 
-        scaleYUniformLocation= parseFloat(event.target.value);
+        scaleYUniformLocation = parseFloat(event.target.value);
 
     };
     document.getElementById("redSlider").oninput = function (event) {
-        //    var value = event.target.value;
-        //    var element = document.getElementById("element-to-change");
-        //    element.style.color = "rgb(" + value + ", 0, 0)";
+        var value = event.target.value;
+        color[0] = value;
+        oppositecolor[0] = 1.0 - value;
     };
     document.getElementById("greenSlider").oninput = function (event) {
-        //TODO: fill here to adjust color according to slider value
+        var value = event.target.value;
+        color[1] = value;
+        oppositecolor[1] = 1.0 - value;
     };
     document.getElementById("blueSlider").oninput = function (event) {
-        //TODO: fill here to adjust color according to slider value
+        var value = event.target.value;
+        color[2] = value;
+        oppositecolor[2] = 1.0 - value;
     };
 
-    //    colorLoc = gl.getUniformLocation(program,"color");	
+    colorLoc = gl.getUniformLocation(program, "color");
 
     render();
 };
@@ -146,17 +151,22 @@ function render() {
 
     //Position
     var XLocation = gl.getUniformLocation(program, "posxvalue");
-    gl.uniform1f(XLocation, posX);
-
+    gl.uniform1f(XLocation, posX); 
     var YLocation = gl.getUniformLocation(program, "posyvalue");
     gl.uniform1f(YLocation, posY);
 
     //Scale
     var scaleXUniformLocations = gl.getUniformLocation(program, "u_ScaleX");
-    gl.uniform1f(scaleXUniformLocations,scaleXUniformLocation);
-
+    gl.uniform1f(scaleXUniformLocations, scaleXUniformLocation);
     var scaleYUniformLocations = gl.getUniformLocation(program, "u_ScaleY");
-    gl.uniform1f(scaleYUniformLocations,scaleYUniformLocation);
+    gl.uniform1f(scaleYUniformLocations, scaleYUniformLocation);
+
+    //Color
+    gl.uniform4fv(colorLoc,oppositecolor);
+    for (let i = 0; i < letter1vertices.length / 4; i++) {
+        const offset = i * 4;
+        gl.drawArrays(gl.TRIANGLE_FAN, offset, 4);
+    }
 
 
 
@@ -187,11 +197,5 @@ function render() {
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, nn);
 
     window.requestAnimFrame(render);
-
-    // Color 
-    //  color = vec4(Math.random(),Math.random(),Math.random(),1.0);
-    //	gl.uniform4fv(colorLoc,color);
-
-
 
 }
