@@ -9,18 +9,18 @@
 attribute vec4 vPosition;
 
 // TODO: get required variables
-uniform float posxvalue;
-uniform float posyvalue;
+uniform float xPosition;
+uniform float yPosition;
 
-uniform float u_ScaleX;
-uniform float u_ScaleY; 
+uniform float xScaleRatio;
+uniform float yScaleRatio;
 
 void main()
 {
 	// TODO: calculate gl_Position appropriately
 
-	vec2 scaledPosition = vec2(vPosition.x * u_ScaleX , vPosition.y * u_ScaleY);
-	gl_Position = vec4(scaledPosition.x + posxvalue , scaledPosition.y + posyvalue , vPosition.zw);
+	vec2 transformedPosition = vec2(vPosition.x * xScaleRatio , vPosition.y * yScaleRatio);
+	gl_Position = vec4(transformedPosition.x + xPosition , transformedPosition.y + yPosition , vPosition.zw);
 
 }
 </script>

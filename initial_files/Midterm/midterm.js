@@ -4,13 +4,16 @@ var vPosition;
 var program;
 
 // TODO: define any global variables you need
-var letter1vertices, letter2vertices;
-var bufferY, buffer2;
+var letterYvertices, letterBvertices;
+var semiCircleUp, semiCircleDown;
+var vertexCount, vertexCount2;
+var bufferY, bufferB, bufferUp, bufferDown;
 var posX = 0, posY = 0;
-var scaleXUniformLocation = 1.0;
-var scaleYUniformLocation = 1.0;
-var color = vec4(1.0, 0.0, 0.0, 1.0);
-var oppositecolor = vec4(1.0 - color[0], 1.0 - color[1], 1.0 - color[2], color[3]);
+var xScalingUniform = 1.0;
+var yScalingUniform = 1.0;
+var color = vec4(0.0, 1.0, 1.0, 1.0);
+var reversecolor = vec4(1.0 - color[0], 1.0 - color[1], 1.0 - color[2], color[3]);
+
 
 window.onload = function init() {
     canvas = document.getElementById("gl-canvas");
@@ -27,7 +30,7 @@ window.onload = function init() {
     gl.useProgram(program);
 
     // Create geometry data
-    letter1vertices = [vec2(-0.5, 0.4),
+    letterYvertices = [vec2(-0.5, 0.4),
     vec2(-0.6, 0.8),
     vec2(-0.8, 0.8),
     vec2(-0.6, 0.1),
@@ -38,45 +41,37 @@ window.onload = function init() {
     vec2(-0.4, 0.8),
     vec2(-0.5, 0.4)];
 
-    letterbvertices = [vec2(0.0, -0.3), vec2(-0.1, -0.3), vec2(0.0, 0.8), vec2(-0.1, 0.8)];
+    letterBvertices = [vec2(0.0, -0.3), vec2(-0.1, -0.3), vec2(0.0, 0.8), vec2(-0.1, 0.8)];
 
-    vertices = [];
-    vertCount = 2;
+    //semi-CircleUp
+    semiCircleUp = [];
+    vertexCount = 2;
     for (var i = 0.0; i <= 180; i += 1) {
-        // degrees to radians
+        // Convert degrees to radians
         var j = (i * Math.PI) / 180;
-        // X Y
+        // X and Y radii to obtain an elliptic shape
         var vert1 = [Math.sin(j) * 0.3, Math.cos(j) * 0.3 + 0.5];
-
-        //width ring
+        //Width of the ring
         var vert2 = [Math.sin(j) * 0.2, Math.cos(j) * 0.2 + 0.5];
-
-
-        vertices = vertices.concat(vert1);
-        vertices = vertices.concat(vert2);
-
+        semiCircleUp = semiCircleUp.concat(vert1);
+        semiCircleUp = semiCircleUp.concat(vert2);
     }
-    n = vertices.length / vertCount;
+    num = semiCircleUp.length / vertexCount;
 
-    //another semi-colon
-    vertices2 = [];
-    vertCount2 = 2;
+    //semi-CircleDown
+    semiCircleDown = [];
+    vertexCount2 = 2;
     for (var ii = 0.0; ii <= 180; ii += 1) {
-        // degrees to radians
+        // Convert degrees to radians
         var jj = (ii * Math.PI) / 180;
-        // X Y
+        // X and Y radii to obtain an elliptic shape
         var vert11 = [Math.sin(jj) * 0.3, Math.cos(jj) * 0.3];
-
-        //width ring
+        //Width of the ring
         var vert22 = [Math.sin(jj) * 0.2, Math.cos(jj) * 0.2];
-
-
-        vertices2 = vertices2.concat(vert11);
-        vertices2 = vertices2.concat(vert22);
-
+        semiCircleDown = semiCircleDown.concat(vert11);
+        semiCircleDown = semiCircleDown.concat(vert22);
     }
-    nn = vertices2.length / vertCount2;
-
+    num2 = semiCircleDown.length / vertexCount2;
 
 
     // TODO: create vertex coordinates for your initial letters instead of these vertices
@@ -84,19 +79,19 @@ window.onload = function init() {
     // Load the data into the GPU		
     bufferY = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, bufferY);
-    gl.bufferData(gl.ARRAY_BUFFER, flatten(letter1vertices), gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(letterYvertices), gl.STATIC_DRAW);
 
-    buffer0 = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffer0);
-    gl.bufferData(gl.ARRAY_BUFFER, flatten(letterbvertices), gl.STATIC_DRAW);
+    bufferB = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, bufferB);
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(letterBvertices), gl.STATIC_DRAW);
 
-    buffer1 = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffer1);
-    gl.bufferData(gl.ARRAY_BUFFER, flatten(vertices), gl.STATIC_DRAW);
+    bufferUp = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, bufferUp);
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(semiCircleUp), gl.STATIC_DRAW);
 
-    buffer2 = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffer2);
-    gl.bufferData(gl.ARRAY_BUFFER, flatten(vertices2), gl.STATIC_DRAW);
+    bufferDown = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, bufferDown);
+    gl.bufferData(gl.ARRAY_BUFFER, flatten(semiCircleDown), gl.STATIC_DRAW);
 
 
     document.getElementById("posX").oninput = function (event) {
@@ -115,32 +110,31 @@ window.onload = function init() {
     };
     document.getElementById("scaleX").oninput = function (event) {
 
-        scaleXUniformLocation = parseFloat(event.target.value);
+        xScalingUniform = parseFloat(event.target.value);
 
     };
     document.getElementById("scaleY").oninput = function (event) {
 
-        scaleYUniformLocation = parseFloat(event.target.value);
+        yScalingUniform = parseFloat(event.target.value);
 
     };
     document.getElementById("redSlider").oninput = function (event) {
-        var value = event.target.value;
-        color[0] = value;
-        oppositecolor[0] = 1.0 - value;
+        var val = event.target.value;
+        color[0] = val;
+        reversecolor[0] = 1.0 - val;
     };
     document.getElementById("greenSlider").oninput = function (event) {
-        var value = event.target.value;
-        color[1] = value;
-        oppositecolor[1] = 1.0 - value;
+        var val = event.target.value;
+        color[1] = val;
+        reversecolor[1] = 1.0 - val;
     };
     document.getElementById("blueSlider").oninput = function (event) {
-        var value = event.target.value;
-        color[2] = value;
-        oppositecolor[2] = 1.0 - value;
+        var val = event.target.value;
+        color[2] = val;
+        reversecolor[2] = 1.0 - val;
     };
 
-    colorLoc = gl.getUniformLocation(program, "color");
-
+    colorLocation = gl.getUniformLocation(program, "color");
     render();
 };
 
@@ -150,23 +144,23 @@ function render() {
     // perform draw calls for drawing letters
 
     //Position
-    var XLocation = gl.getUniformLocation(program, "posxvalue");
-    gl.uniform1f(XLocation, posX); 
-    var YLocation = gl.getUniformLocation(program, "posyvalue");
-    gl.uniform1f(YLocation, posY);
+    var xCoordinate = gl.getUniformLocation(program, "xPosition");
+    gl.uniform1f(xCoordinate, posX);
+    var yCoordinate = gl.getUniformLocation(program, "yPosition");
+    gl.uniform1f(yCoordinate, posY);
 
     //Scale
-    var scaleXUniformLocations = gl.getUniformLocation(program, "u_ScaleX");
-    gl.uniform1f(scaleXUniformLocations, scaleXUniformLocation);
-    var scaleYUniformLocations = gl.getUniformLocation(program, "u_ScaleY");
-    gl.uniform1f(scaleYUniformLocations, scaleYUniformLocation);
+    var xScalingUniforms = gl.getUniformLocation(program, "xScaleRatio");
+    gl.uniform1f(xScalingUniforms, xScalingUniform);
+    var yScalingUniforms = gl.getUniformLocation(program, "yScaleRatio");
+    gl.uniform1f(yScalingUniforms, yScalingUniform);
 
     //Color
-    gl.uniform4fv(colorLoc,oppositecolor);
-    for (let i = 0; i < letter1vertices.length / 4; i++) {
-        const offset = i * 4;
-        gl.drawArrays(gl.TRIANGLE_FAN, offset, 4);
-    }
+    gl.uniform4fv(colorLocation, reversecolor);
+     for (let i = 0; i < letterYvertices.length / 4; i++) {
+         const offset = i * 4;
+         gl.drawArrays(gl.TRIANGLE_STRIP, offset, 4);
+     }
 
 
 
@@ -174,27 +168,29 @@ function render() {
     gl.bindBuffer(gl.ARRAY_BUFFER, bufferY);
     gl.vertexAttribPointer(vPosition, 2, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(vPosition);
-    // draw triangle
-    gl.drawArrays(gl.TRIANGLE_FAN, 0, letter1vertices.length);
+    // draw Y Letter
+    gl.drawArrays(gl.TRIANGLE_FAN, 0, letterYvertices.length);
 
     // bind vertex buffer and associate position data with shader variables
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffer0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, bufferB);
     gl.vertexAttribPointer(vPosition, 2, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(vPosition);
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, letterbvertices.length);
-    // bind vertex buffer and associate position data with shader variables
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffer1);
-    gl.vertexAttribPointer(vPosition, vertCount, gl.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(vPosition);
-    // draw triangle
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, n);
+    // draw B Letter
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, letterBvertices.length);
 
     // bind vertex buffer and associate position data with shader variables
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffer2);
-    gl.vertexAttribPointer(vPosition, vertCount2, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, bufferUp);
+    gl.vertexAttribPointer(vPosition, vertexCount, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(vPosition);
-    // draw triangle
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, nn);
+    // draw semi-CircleUp
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, num);
+    
+    // bind vertex buffer and associate position data with shader variables
+    gl.bindBuffer(gl.ARRAY_BUFFER, bufferDown);
+    gl.vertexAttribPointer(vPosition, vertexCount2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(vPosition);
+    // draw semi-CircleDown
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, num2);
 
     window.requestAnimFrame(render);
 
